@@ -155,6 +155,10 @@ int main()
 			continue;
 		}
 	    command = commandss(line);
+		if (strcmp(*command, "exit") == 0)
+	    {
+		    break;
+	    }
 	    if (strcmp(*command, "env") == 0)
 	    {
 		    env = environ;
