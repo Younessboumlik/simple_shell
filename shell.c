@@ -39,7 +39,7 @@ char *check_path(char *command)
 		free(new_cmd);
 		tok = strtok(NULL,":");
 	}
-	free(path2); // Free path2 after the loop
+	free(path2);
 
 	return (NULL);
 }
@@ -65,8 +65,10 @@ char *getlineterminal()
 			exit(0);
 		}
 		else
+		{
 			perror("getline failed.");
 			free(buffer);
+		}
         buffer = NULL;
         return (NULL);
     }
@@ -100,7 +102,7 @@ char **commandss(char *ch)
             commands[i] = strdup(commands[i]);
         }
     }
-    free(ch_copy); ch_copy=NULL; // Avoid dangling pointer
+    free(ch_copy); ch_copy=NULL;
     return (commands);
 }
 
@@ -112,8 +114,6 @@ void execute_commands(char **commands)
         perror("fork");
         exit(1);
     }
-    
-    char *old_command_0 = commands[0];
     commands[0] = check_path(commands[0]);
 
     if (pid == 0)
@@ -126,8 +126,6 @@ void execute_commands(char **commands)
     {
         wait(NULL);
     }
-
-    // Do not free commands[0] here
 }
 
 int main()
@@ -145,13 +143,13 @@ int main()
 		j = 0;
 		while (line[j] != '\0')
 	    {
-			if(!isspace(line[j])) // Use isspace to check for white-space characters
+			if(!isspace(line[j])) 
 			{
 				break;
 			}
 			j++;
 	    }
-		if (line[j] == '\0') // If we've reached the end of the line, it was all spaces
+		if (line[j] == '\0') 
 		{
 			free(line); line = NULL;
 			continue;
@@ -174,11 +172,11 @@ int main()
 	    while (command[i] != NULL)
 	    {
 		    free(command[i]);
-		    command[i] = NULL; // Avoid dangling pointer
+		    command[i] = NULL; 
 		    i++;
 	    }		
-        free(line); line=NULL; // Avoid dangling pointer
-        free(command); command=NULL; // Avoid dangling pointer
+        free(line); line=NULL;
+        free(command); command=NULL;
     }	
 	return (0);
 }
