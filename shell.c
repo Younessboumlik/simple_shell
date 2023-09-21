@@ -5,6 +5,11 @@
 #include <sys/wait.h>
 #include <string.h>
 #include <ctype.h>
+/**
+ * check_path - checks if command is in PATH
+ * @command: command to check
+ * Return: command if found in PATH, NULL otherwise
+ */
 char *check_path(char *command)
 {
 	char *path=getenv("PATH"),*path2,*tok,*new_cmd;
@@ -43,7 +48,10 @@ char *check_path(char *command)
 
 	return (NULL);
 }
-
+/**
+ * getlineterminal - gets line from terminal
+ * Return: line from terminal
+ */
 char *getlineterminal()
 {
 	char *buffer;
@@ -74,7 +82,11 @@ char *getlineterminal()
     }
     return (buffer);
 }
-
+/**
+ * commandss - splits commands into array of commands
+ * @ch: string of commands
+ * Return: array of commands
+ */
 char **commandss(char *ch)
 {
 	char **commands;
@@ -105,7 +117,10 @@ char **commandss(char *ch)
     free(ch_copy); ch_copy=NULL;
     return (commands);
 }
-
+/**
+ * execute_commands - executes commands
+ * @commands: array of commands
+ */
 void execute_commands(char **commands)
 {
     pid_t pid = fork();
@@ -127,7 +142,10 @@ void execute_commands(char **commands)
         wait(NULL);
     }
 }
-
+/**
+ * main - main function for shell
+ * Return: 0 on success
+ */
 int main()
 {
 	extern char **environ;
