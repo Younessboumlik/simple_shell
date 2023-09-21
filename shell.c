@@ -7,69 +7,81 @@
 #include <string.h>
 #include <ctype.h>
 
+/**
+ * check_path - checks if the command is in the PATH
+ * @command: command to check
+ *
+ * Return: command if it's in the PATH, NULL otherwise
+ */
 char *check_path(char *command)
 {
-	char *path=getenv("PATH"),*path2,*tok,*new_cmd;
-	int i = 0,c = 0;
+    char *path = getenv("PATH"), *path2, *tok, *new_cmd;
+    int i = 0, c = 0;
 
-	while(command[i] != '\0')
-	{
-		if (command[i] == '/')
-		{
-			return command;
-		}
-		i++;
-	}
-	path2 = strdup(path);
-	tok = strtok(path2,":");
+    while (command[i] != '\0')
+    {
+        if (command[i] == '/')
+        {
+            return (command);
+        }
+        i++;
+    }
+    path2 = strdup(path);
+    tok = strtok(path2, ":");
 
-	while(tok != NULL)
-	{
-		new_cmd = calloc(strlen(tok)+2+strlen(command), sizeof(char));
-		strcpy(new_cmd,tok);
-		new_cmd[strlen(tok)] = '/';
-		strcat(new_cmd,command);
-		new_cmd[strlen(new_cmd)] = '\0';		
-		c = access(new_cmd,F_OK);
-		if (c == 0)
-		{
-			char *new_cmd_copy = strdup(new_cmd);
-			free(new_cmd);
-			free(path2);
-			return new_cmd_copy;
-		}
-		free(new_cmd);
-		tok = strtok(NULL,":");
-	}
-	free(path2);
+    while (tok != NULL)
+    {
+        new_cmd = calloc(strlen(tok) + 2 + strlen(command), sizeof(char));
+        strcpy(new_cmd, tok);
+        new_cmd[strlen(tok)] = '/';
+        strcat(new_cmd, command);
+        new_cmd[strlen(new_cmd)] = '\0';
+        c = access(new_cmd, F_OK);
+        if (c == 0)
+        {
+            char *new_cmd_copy = strdup(new_cmd);
 
-	return (NULL);
+            free(new_cmd);
+            free(path2);
+            return (new_cmd_copy);
+        }
+        free(new_cmd);
+        tok = strtok(NULL, ":");
+    }
+    free(path2);
+
+    return (NULL);
 }
 
-char *getlineterminal()
+/**
+ * getlineterminal - reads a line from the terminal
+ *
+ * Return: buffer containing the line read
+ */
+char *getlineterminal(void)
 {
-	char *buffer;
-	size_t bufsize = 40;
-	ssize_t character;
+    char *buffer;
+    size_t bufsize = 40;
+    ssize_t character;
 
-	buffer = (char *)malloc(bufsize * sizeof(char));
-	if (buffer == NULL)
-	{
-		perror("Unable to allocate buffer");
-		exit(1);
-	}
-	character = getline(&buffer,&bufsize,stdin);
-	if (character == -1)
-	{
-		if (feof(stdin))
-		{
-			free(buffer);
-			exit(0);
-		}
-		else
-		{
-			perror("getline failed.");
-			free(buffer);
+    buffer = (char *)malloc(bufsize * sizeof(char));
+    if (buffer == NULL)
+    {
+        perror("Unable to allocate buffer");
+        exit(1);
+    }
+    character = getline(&buffer, &bufsize, stdin);
+    if (character == -1)
+    {
+        if (feof(stdin))
+        {
+            free(buffer);
+            exit(0);
+        }
+        else
+        {
+            perror("getline failed.");
+            free(buffer);
             buffer = NULL;
             return (NULL);
         }
@@ -77,94 +89,113 @@ char *getlineterminal()
     return (buffer);
 }
 
+/**
+ * commandss - splits the input line into separate commands
+ * @ch: input line
+ *
+ * Return: array of commands
+ */
 char **commandss(char *ch)
 {
-	char **commands;
-	int i = 0;
-	char *ch_copy = strdup(ch);
+    char **commands;
+    int i = 0;
+    char *ch_copy = strdup(ch);
 
     commands = malloc(sizeof(char *));
-    if(commands == NULL)
+    if (commands == NULL)
     {
         perror("Unable to allocate buffer");
         exit(1);
     }
-    commands[0] = strdup(strtok(ch_copy," \t\n"));
+    commands[0] = strdup(strtok(ch_copy, " \t\n"));
     while (commands[i] != NULL)
     {
         i++;
-        commands = realloc(commands, (i + 1)*sizeof(char *));
-        if(commands == NULL)
+        commands = realloc(commands, (i + 1) * sizeof(char *));
+        if (commands == NULL)
         {
             perror("Unable to allocate buffer");
             exit(1);
         }
-        commands[i] = strtok(NULL," \t\n");
-        if (commands[i] != NULL) {
+        commands[i] = strtok(NULL, " \t\n");
+        if (commands[i] != NULL)
+        {
             commands[i] = strdup(commands[i]);
         }
     }
-    free(ch_copy); ch_copy=NULL;
-    return (commands);
+    free(ch_copy);
+    
+	return (commands);
 }
 
+/**
+ * execute_commands - executes the parsed commands
+ * @commands: parsed commands
+ */
 void execute_commands(char **commands)
 {
-    pid_t pid = fork();
-    if(pid == -1)
-    {
-        perror("fork");
-        exit(1);
-    }
-    commands[0] = check_path(commands[0]);
+	pid_t pid = fork();
 
-    if (pid == 0)
-    {
-        execve(commands[0], commands, NULL);
-        perror("execve");
-        exit(EXIT_FAILURE);
-    }
-    else if (pid > 0)
-    {
-        wait(NULL);
-    }
+	if(pid == -1)
+	{
+		perror("fork");
+		exit(1);
+	}
+	commands[0] = check_path(commands[0]);
+
+	if (pid == 0)
+	{
+		execve(commands[0], commands, NULL);
+		perror("execve");
+		exit(EXIT_FAILURE);
+	}
+	else if (pid > 0)
+	{
+		wait(NULL);
+	}
 }
 
+/**
+ * change_directory - changes the current working directory
+ * @commands: parsed commands
+ */
 void change_directory(char **commands)
 {
-    char *home = getenv("HOME");
-    char cwd[1024];
+	char *home = getenv("HOME");
+	char cwd[1024];
 
-    if (commands[1] == NULL || strcmp(commands[1], "~") == 0)
-    {
-        if (home == NULL)
-        {
-            fprintf(stderr, "cd: HOME not set\n");
-            return;
-        }
-        chdir(home);
-    }
-    else if (strcmp(commands[1], "-") == 0)
-    {
-        char *oldpwd = getenv("OLDPWD");
-        if (oldpwd == NULL)
-        {
-            fprintf(stderr, "cd: OLDPWD not set\n");
-            return;
-        }
-        printf("%s\n", oldpwd);
-        chdir(oldpwd);
-    }
-	  else
-    {
-        if(chdir(commands[1]) != 0)
-        {
-            fprintf(stderr, "./hsh: 1: cd: can't cd to %s\n", commands[1]);
-            return;
-        }
-    }
+	if (commands[1] == NULL || strcmp(commands[1], "~") == 0)
+	{
+		if (home == NULL)
+		{
+			fprintf(stderr, "cd: HOME not set\n");
+			return;
+		}
+		chdir(home);
+	}
+	else if (strcmp(commands[1], "-") == 0)
+	{
+		char *oldpwd = getenv("OLDPWD");
+
+		if (oldpwd == NULL)
+		{
+			fprintf(stderr, "cd: OLDPWD not set\n");
+			return;
+		}
+		printf("%s\n", oldpwd);
+		chdir(oldpwd);
+	}
+	else
+	{
+	    if(chdir(commands[1]) != 0)
+	    {
+		    fprintf(stderr, "./hsh: 1: cd: can't cd to %s\n", commands[1]);
+		    return;
+	    }
+	}
 
 	if(getcwd(cwd, sizeof(cwd)) != NULL)
-	    setenv("PWD", cwd, 1);
-
+	{
+		setenv("PWD", cwd, 1);
+	}
 }
