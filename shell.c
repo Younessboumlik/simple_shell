@@ -8,6 +8,22 @@
 #include <ctype.h>
 
 /**
+ * remove_comments - Removes comments from a line of input.
+ * @line: The input line.
+ *
+ * Return: The input line with comments removed.
+ */
+char *remove_comments(char *line)
+{
+    char *comment_start = strchr(line, '#');
+    if (comment_start != NULL)
+    {
+        *comment_start = '\0';
+    }
+    return line;
+}
+
+/**
  * check_path - checks if the command is in the PATH
  * @command: command to check
  *
