@@ -157,6 +157,14 @@ int main()
 	    command = commandss(line);
 		if (strcmp(*command, "exit") == 0)
 	    {
+			free(line);
+			 while (command[i] != NULL)
+			{
+		    	free(command[i]);
+		    	command[i] = NULL; 
+		    	i++;
+	    	}
+			free(command);
 		    break;
 	    }
 	    if (strcmp(*command, "env") == 0)
@@ -172,7 +180,7 @@ int main()
 	    {
 		    execute_commands(command);
 	    }
-	    i = 0;
+		i = 0;
 	    while (command[i] != NULL)
 	    {
 		    free(command[i]);
