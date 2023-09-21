@@ -7,7 +7,12 @@
 #include <string.h>
 #include <ctype.h>
 
-int main()
+/**
+ * main - main function for the shell
+ *
+ * Return: 0 on success.
+ */
+int main(void)
 {
 	extern char **environ;
 	char *line = NULL;
@@ -16,67 +21,72 @@ int main()
 	int i = 0, j;
 
 	while (1)
-    {
-	    line = getlineterminal();
-	    
-	    j = 0;
-	    while (line[j] != '\0')
-	    {
-		    if(!isspace(line[j])) 
-		    {
-			    break;
-		    }
-		    j++;
-	    }
-	    if (line[j] == '\0') 
-	    {
-		    free(line); line=NULL;
-		    continue;
-	    }
+	{
+		line = getlineterminal();
 
-	    command = commandss(line);
+		j = 0;
+		while (line[j] != '\0')
+		{
+			if (!isspace(line[j]))
+			{
+				break;
+			}
+			j++;
+		}
+		if (line[j] == '\0')
+		{
+			free(line);
+			line = NULL;
+			continue;
+		}
 
-	    if (strcmp(*command, "exit") == 0)
-	    {
-		    free(line); line=NULL;
+		command = commandss(line);
 
-		    while (command[i] != NULL)
-		    {
-			    free(command[i]);
-			    command[i] = NULL; 
-			    i++;
-		    }
-		    free(command); command=NULL;
-		    break;
-	    }
+		if (strcmp(*command, "exit") == 0)
+		{
+			free(line);
+			line = NULL;
 
-	    if (strcmp(*command, "env") == 0)
-	    {
-		    env = environ;
-		    while (*env)
-		    {
-			    printf("%s\n",*env);
-			    env++;
-		    }
-	    }
-	    else if (strcmp(*command, "cd") == 0)
-	    {
-		    change_directory(command);
-	    }
-	    else
-	    {
-		    execute_commands(command);
-	    }
+			while (command[i] != NULL)
+			{
+				free(command[i]);
+				command[i] = NULL;
+				i++;
+			}
+			free(command);
+			command = NULL;
+			break;
+		}
 
-	    i = 0;
-	    while (command[i] != NULL)
-	    {
-		    free(command[i]);
-		    command[i] = NULL; 
-		    i++;
-	    }		
-        free(line); line=NULL;
-        free(command); command=NULL;
-    }	
-	return (0);
+		if (strcmp(*command, "env") == 0)
+		{
+			env = environ;
+			while (*env)
+			{
+				printf("%s\n", *env);
+				env++;
+			}
+		}
+		else if (strcmp(*command, "cd") == 0)
+		{
+			change_directory(command);
+		}
+		else
+		{
+			execute_commands(command);
+		}
+
+		i = 0;
+		while (command[i] != NULL)
+		{
+			free(command[i]);
+			command[i] = NULL;
+			i++;
+	    }
+	    free(line);
+	    line = NULL;
+	    free(command);
+	    command = NULL;
+    }
+    return (0);
 }
