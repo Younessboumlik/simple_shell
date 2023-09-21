@@ -23,6 +23,7 @@ int main(void)
 	while (1)
 	{
 		line = getlineterminal();
+		line = remove_comments(line);
 
 		j = 0;
 		while (line[j] != '\0')
