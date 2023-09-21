@@ -1,3 +1,4 @@
+#include <main.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -5,11 +6,15 @@
 #include <sys/wait.h>
 #include <string.h>
 #include <ctype.h>
+<<<<<<< HEAD
+
+=======
 /**
  * check_path - checks if command is in PATH
  * @command: command to check
  * Return: command if found in PATH, NULL otherwise
  */
+>>>>>>> 82146be0e8c0eb4b9f20cbb4d30a4320bf0927ee
 char *check_path(char *command)
 {
 	char *path=getenv("PATH"),*path2,*tok,*new_cmd;
@@ -76,9 +81,9 @@ char *getlineterminal()
 		{
 			perror("getline failed.");
 			free(buffer);
-		}
-        buffer = NULL;
-        return (NULL);
+            buffer = NULL;
+            return (NULL);
+        }
     }
     return (buffer);
 }
@@ -142,20 +147,55 @@ void execute_commands(char **commands)
         wait(NULL);
     }
 }
+<<<<<<< HEAD
+
+void change_directory(char **commands)
+=======
 /**
  * main - main function for shell
  * Return: 0 on success
  */
 int main()
+>>>>>>> 82146be0e8c0eb4b9f20cbb4d30a4320bf0927ee
 {
-	extern char **environ;
-	char *line = NULL;
-	char **command = NULL;
-	char **env = environ;
-	int i = 0, j;
+    char *home = getenv("HOME");
+    char cwd[1024];
 
-	while (1)
+    if (commands[1] == NULL || strcmp(commands[1], "~") == 0)
     {
+<<<<<<< HEAD
+        if (home == NULL)
+        {
+            fprintf(stderr, "cd: HOME not set\n");
+            return;
+        }
+        chdir(home);
+    }
+    else if (strcmp(commands[1], "-") == 0)
+    {
+        char *oldpwd = getenv("OLDPWD");
+        if (oldpwd == NULL)
+        {
+            fprintf(stderr, "cd: OLDPWD not set\n");
+            return;
+        }
+        printf("%s\n", oldpwd);
+        chdir(oldpwd);
+    }
+	  else
+    {
+        if(chdir(commands[1]) != 0)
+        {
+            fprintf(stderr, "./hsh: 1: cd: can't cd to %s\n", commands[1]);
+            return;
+        }
+    }
+
+	if(getcwd(cwd, sizeof(cwd)) != NULL)
+	    setenv("PWD", cwd, 1);
+
+}
+=======
 		line = getlineterminal();
 	    
 		j = 0;
@@ -210,3 +250,4 @@ int main()
     }	
 	return (0);
 }
+>>>>>>> 82146be0e8c0eb4b9f20cbb4d30a4320bf0927ee
