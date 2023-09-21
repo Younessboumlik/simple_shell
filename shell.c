@@ -1,4 +1,4 @@
-#include <main.h>
+#include "main.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -6,15 +6,7 @@
 #include <sys/wait.h>
 #include <string.h>
 #include <ctype.h>
-<<<<<<< HEAD
 
-=======
-/**
- * check_path - checks if command is in PATH
- * @command: command to check
- * Return: command if found in PATH, NULL otherwise
- */
->>>>>>> 82146be0e8c0eb4b9f20cbb4d30a4320bf0927ee
 char *check_path(char *command)
 {
 	char *path=getenv("PATH"),*path2,*tok,*new_cmd;
@@ -53,10 +45,7 @@ char *check_path(char *command)
 
 	return (NULL);
 }
-/**
- * getlineterminal - gets line from terminal
- * Return: line from terminal
- */
+
 char *getlineterminal()
 {
 	char *buffer;
@@ -87,11 +76,7 @@ char *getlineterminal()
     }
     return (buffer);
 }
-/**
- * commandss - splits commands into array of commands
- * @ch: string of commands
- * Return: array of commands
- */
+
 char **commandss(char *ch)
 {
 	char **commands;
@@ -122,10 +107,7 @@ char **commandss(char *ch)
     free(ch_copy); ch_copy=NULL;
     return (commands);
 }
-/**
- * execute_commands - executes commands
- * @commands: array of commands
- */
+
 void execute_commands(char **commands)
 {
     pid_t pid = fork();
@@ -147,23 +129,14 @@ void execute_commands(char **commands)
         wait(NULL);
     }
 }
-<<<<<<< HEAD
 
 void change_directory(char **commands)
-=======
-/**
- * main - main function for shell
- * Return: 0 on success
- */
-int main()
->>>>>>> 82146be0e8c0eb4b9f20cbb4d30a4320bf0927ee
 {
     char *home = getenv("HOME");
     char cwd[1024];
 
     if (commands[1] == NULL || strcmp(commands[1], "~") == 0)
     {
-<<<<<<< HEAD
         if (home == NULL)
         {
             fprintf(stderr, "cd: HOME not set\n");
@@ -195,59 +168,3 @@ int main()
 	    setenv("PWD", cwd, 1);
 
 }
-=======
-		line = getlineterminal();
-	    
-		j = 0;
-		while (line[j] != '\0')
-	    {
-			if(!isspace(line[j])) 
-			{
-				break;
-			}
-			j++;
-	    }
-		if (line[j] == '\0') 
-		{
-			free(line); line = NULL;
-			continue;
-		}
-	    command = commandss(line);
-		if (strcmp(*command, "exit") == 0)
-	    {
-			free(line);
-			 while (command[i] != NULL)
-			{
-		    	free(command[i]);
-		    	command[i] = NULL; 
-		    	i++;
-	    	}
-			free(command);
-		    break;
-	    }
-	    if (strcmp(*command, "env") == 0)
-	    {
-		    env = environ;
-		    while (*env)
-		    {
-			    printf("%s\n",*env);
-			    env++;
-		    }
-	    }
-	    else
-	    {
-		    execute_commands(command);
-	    }
-		i = 0;
-	    while (command[i] != NULL)
-	    {
-		    free(command[i]);
-		    command[i] = NULL; 
-		    i++;
-	    }		
-        free(line); line=NULL;
-        free(command); command=NULL;
-    }	
-	return (0);
-}
->>>>>>> 82146be0e8c0eb4b9f20cbb4d30a4320bf0927ee
