@@ -6,6 +6,7 @@ char *getlineterminal();
 char **commandss(char *ch);
 void execute_commands(char **commands);
 void change_directory(char **commands);
+char *remove_comments(char *line);
 int main();
 
 #endif
