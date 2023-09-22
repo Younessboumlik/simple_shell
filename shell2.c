@@ -6,7 +6,6 @@
 #include <sys/wait.h>
 #include <string.h>
 #include <ctype.h>
-
 /**
  * main - main function for the shell
  *
