@@ -6,7 +6,6 @@
 #include <sys/wait.h>
 #include <string.h>
 #include <ctype.h>
-
 /**
  * remove_comments - Removes comments from a line of input.
  * @line: The input line.
@@ -144,32 +143,52 @@ char **commandss(char *ch)
 	return (commands);
 }
 
+
 /**
  * execute_commands - executes the parsed commands
  * @commands: parsed commands
  */
 void execute_commands(char **commands)
 {
-	pid_t pid = fork();
+    pid_t pid = fork();
 
-	if(pid == -1)
-	{
-		perror("fork");
-		exit(1);
-	}
-	commands[0] = check_path(commands[0]);
+    if (pid == -1)
+    {
+        perror("fork");
+        exit(1);
+    }
 
-	if (pid == 0)
-	{
-		execve(commands[0], commands, NULL);
-		perror("execve");
-		exit(EXIT_FAILURE);
-	}
-	else if (pid > 0)
-	{
-		wait(NULL);
-	}
+    if (pid == 0)
+    {
+        dup2(STDOUT_FILENO, STDERR_FILENO);
+
+        if (commands[0] == NULL)
+        {
+            fprintf(stderr, "./hsh: command not found\n");
+            exit(EXIT_FAILURE);
+        }
+
+        commands[0] = check_path(commands[0]);
+
+        if (commands[0] == NULL)
+        {
+            fprintf(stderr, "./hsh: %s: command not found\n", commands[0]);
+            exit(EXIT_FAILURE);
+        }
+
+        execve(commands[0], commands, NULL);
+
+        fprintf(stderr, "./hsh: %s: command not found\n", commands[0]);
+        exit(EXIT_FAILURE);
+    }
+    else if (pid > 0)
+    {
+        wait(NULL);
+    }
 }
+
+
+
 
 /**
  * change_directory - changes the current working directory
