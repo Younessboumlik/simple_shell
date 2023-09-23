@@ -150,6 +150,8 @@ char **commandss(char *ch)
  */
 void execute_commands(char **commands)
 {
+    extern char **environ;
+    char **env = environ;
     pid_t pid = fork();
 
     if (pid == -1)
@@ -166,6 +168,16 @@ void execute_commands(char **commands)
         {
             fprintf(stderr, "./hsh: command not found\n");
             exit(EXIT_FAILURE);
+        }
+
+        if (strcmp(commands[0], "env") == 0)
+        {
+            while (*env)
+            {
+                printf("%s\n", *env);
+                env++;
+            }
+            exit(EXIT_SUCCESS);
         }
 
         commands[0] = check_path(commands[0]);
@@ -186,9 +198,6 @@ void execute_commands(char **commands)
         wait(NULL);
     }
 }
-
-
-
 
 /**
  * change_directory - changes the current working directory
